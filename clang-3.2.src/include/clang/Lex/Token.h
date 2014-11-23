@@ -182,14 +182,8 @@ public:
   /// returns a pointer to the start of it in the text buffer if known, null
   /// otherwise.
   const char *getLiteralData() const {
-    char *lit;
     assert(isLiteral() && "Cannot get literal data of non-literal");
-    //return reinterpret_cast<const char*>(PtrData);
-    /// eat the forward '#'
-    lit = reinterpret_cast<const char*>(PtrData);
-    while (*lit == '#')
-      lit ++;
-    return lit;
+    return reinterpret_cast<const char*>(PtrData);
   }
   void setLiteralData(const char *Ptr) {
     assert(isLiteral() && "Cannot set literal data of non-literal");

@@ -524,5 +524,11 @@ def warn_uncovered_module_header : Warning<
   "umbrella header does not include header '%0'">, InGroup<IncompleteUmbrella>;
 def err_expected_id_building_module : Error<
   "expected a module name in '__building_module' expression">;
+
+//diagnostics add for iec61131-3
+def err_trail_under_in_identifier : Error<
+  "trailing underlines are not allowed in identifiers">;
+def err_multi_unders_in_identifier : Error<
+  "multiple leading or multiple embedded underlines are not allowed in identifiers">;
   
 }

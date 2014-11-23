@@ -573,6 +573,8 @@ private:
   void cutOffLexing() { BufferPtr = BufferEnd; }
 
   bool isHexaLiteral(const char *Start, const LangOptions &LangOpts);
+  bool isOctaLiteral(const char *Start, const LangOptions &LangOpts);
+  bool isBinaLiteral(const char *Start, const LangOptions &LangOpts);
 };
 
 

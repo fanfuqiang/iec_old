@@ -1476,6 +1476,11 @@ void Lexer::LexIdentifier(Token &Result, const char *CurPtr) {
 
   --CurPtr;   // Back up over the skipped character.
 
+  // st identifier trailing underline is not allowed
+  // TODO: multiple underlines is not allowed, should we do this ?
+  if (*CurPtr == '_')
+    Diag(CurPtr, diag::err_trail_under_in_identifier);
+
   // Fast path, no $,\,? in identifier found.  '\' might be an escaped newline
   // or UCN, and ? might be a trigraph for '\', an escaped newline or UCN.
   // FIXME: UCNs.
@@ -1540,10 +1545,32 @@ FinishIdentifier:
 bool Lexer::isHexaLiteral(const char *Start, const LangOptions &LangOpts) {
   unsigned Size;
   char C1 = Lexer::getCharAndSizeNoWarn(Start, Size, LangOpts);
-  if (C1 != '0')
+  if (C1 != '1')
+    return false;
+  char C2 = Lexer::getCharAndSizeNoWarn(Start + size, Size, LangOpts);
+  if (C2 != '6')
+    return false;
+  char C3 = Lexer::getCharAndSizeNoWarn(Start + Size, Size, LangOpts);
+  return C2 == '#';
+}
+///
+bool Lexer::isOctaLiteral(const char *Start, const LangOptions &LangOpts) {
+  unsigned Size;
+  char C1 = Lexer::getCharAndSizeNoWarn(Start, Size, LangOpts);
+  if (C1 != '8')
     return false;
   char C2 = Lexer::getCharAndSizeNoWarn(Start + Size, Size, LangOpts);
-  return (C2 == 'x' || C2 == 'X');
+  return C2 == '#';
+}
+
+///
+bool Lexer::isBinaLiteral(const char *Start, const LangOptions &LangOpts) {
+  unsigned Size;
+  char C1 = Lexer::getCharAndSizeNoWarn(Start, Size, LangOpts);
+  if (C1 != '2')
+    return false;
+  char C2 = Lexer::getCharAndSizeNoWarn(Start + Size, Size, LangOpts);
+  return C2 == '#';
 }
 
 /// LexNumericConstant - Lex the remainder of a integer or floating point
@@ -2178,7 +2205,8 @@ bool Lexer::SkipBlockComment(Token &Result, const char *CurPtr) {
       while (C != '/' && ((intptr_t)CurPtr & 0x0F) != 0)
         C = *CurPtr++;
 
-      if (C == '/') goto FoundSlash;
+      //if (C == '/') goto FoundSlash;
+      if (C == ')') goto FoundSlash;
 
 #ifdef __SSE2__
       __m128i Slashes = _mm_set1_epi8('/');
@@ -2221,7 +2249,8 @@ bool Lexer::SkipBlockComment(Token &Result, const char *CurPtr) {
     while (C != '/' && C != '\0')
       C = *CurPtr++;
 
-    if (C == '/') {
+    //if (C == '/') {
+    if (C == ')') {
   FoundSlash:
       if (CurPtr[-2] == '*')  // We found the final */.  We're done!
         break;
@@ -2864,7 +2893,16 @@ LexNextToken:
     Kind = tok::r_square;
     break;
   case '(':
-    Kind = tok::l_paren;
+    // 6.4.9: Comments
+    Char = getCharAndSize(CurPtr, SizeTmp);
+
+    if (Char == '*') {  // /**/ comment.
+      if (SkipBlockComment(Result, ConsumeChar(CurPtr, SizeTmp, Result)))
+        return; // There is a token to return.
+      goto LexNextToken;   // GCC isn't tail call eliminating.
+    } else {
+      Kind = tok::l_paren;
+    }
     break;
   case ')':
     Kind = tok::r_paren;
@@ -2958,6 +2996,7 @@ LexNextToken:
     }
     break;
   case '/':
+#if 0
     // 6.4.9: Comments
     Char = getCharAndSize(CurPtr, SizeTmp);
     if (Char == '/') {         // Line comment.
@@ -2987,7 +3026,7 @@ LexNextToken:
         return; // There is a token to return.
       goto LexNextToken;   // GCC isn't tail call eliminating.
     }
-
+#endif
     if (Char == '=') {
       CurPtr = ConsumeChar(CurPtr, SizeTmp, Result);
       Kind = tok::slashequal;
