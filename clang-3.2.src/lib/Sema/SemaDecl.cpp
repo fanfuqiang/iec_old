@@ -9253,6 +9253,7 @@ CreateNewDecl:
   return New;
 }
 
+// TODO: implementate iec type name define semantaics
 void Sema::ActOnTagStartDefinition(Scope *S, Decl *TagD) {
   AdjustDeclIfTemplate(TagD);
   TagDecl *Tag = cast<TagDecl>(TagD);
@@ -10095,6 +10096,7 @@ void Sema::ActOnLastBitfield(SourceLocation DeclLoc,
   AllIvarDecls.push_back(Ivar);
 }
 
+// TODO: implementate the iec fieleds define semantics
 void Sema::ActOnFields(Scope* S,
                        SourceLocation RecLoc, Decl *EnclosingDecl,
                        llvm::ArrayRef<Decl *> Fields,

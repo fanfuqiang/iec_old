@@ -2745,8 +2745,10 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
     case tok::kw_class:
     case tok::kw_struct:
     case tok::kw___interface:
-    case tok::kw_union: {
-      tok::TokenKind Kind = Tok.getKind();
+    case tok::kw_union:
+    // iec type define
+    case tok::kw_type: {
+      tok::TokenKind Kind = Tok.getKind(); // this value is enumrator: kw_type
       ConsumeToken();
       ParseClassSpecifier(Kind, Loc, DS, TemplateInfo, AS,
                           EnteringContext, DSContext);
@@ -2959,6 +2961,7 @@ void Parser::ParseStructUnionBody(SourceLocation RecordLoc,
 
   // Empty structs are an extension in C (C99 6.7.2.1p7), but are allowed in
   // C++.
+  // TODO: type define syntax
   if (Tok.is(tok::r_brace) && !getLangOpts().CPlusPlus) {
     Diag(Tok, diag::ext_empty_struct_union) << (TagType == TST_union);
     Diag(Tok, diag::warn_empty_struct_union_compat) << (TagType == TST_union);
@@ -3023,6 +3026,7 @@ void Parser::ParseStructUnionBody(SourceLocation RecordLoc,
 
     if (Tok.is(tok::semi)) {
       ConsumeToken();
+    // TODO: iec syntax dont need brace
     } else if (Tok.is(tok::r_brace)) {
       ExpectAndConsume(tok::semi, diag::ext_expected_semi_decl_list);
       break;
@@ -3040,12 +3044,13 @@ void Parser::ParseStructUnionBody(SourceLocation RecordLoc,
   ParsedAttributes attrs(AttrFactory);
   // If attributes exist after struct contents, parse them.
   MaybeParseGNUAttributes(attrs);
-
+  //TODO: need iec semantics
   Actions.ActOnFields(getCurScope(),
                       RecordLoc, TagDecl, FieldDecls,
                       T.getOpenLocation(), T.getCloseLocation(),
                       attrs.getList());
   StructScope.Exit();
+  //TODO: need iec semantics
   Actions.ActOnTagFinishDefinition(getCurScope(), TagDecl,
                                    T.getCloseLocation());
 }

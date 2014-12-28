@@ -52,6 +52,7 @@ namespace clang {
     TST_enum,
     TST_union,
     TST_struct,
+    TST_type,         // iec define type
     TST_class,        // C++ class type
     TST_interface,    // C++ (Microsoft-specific) __interface type
     TST_typename,     // Typedef, C++ class-name or enum name, etc.

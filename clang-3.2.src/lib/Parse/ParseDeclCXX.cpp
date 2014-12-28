@@ -1058,6 +1058,8 @@ void Parser::ParseClassSpecifier(tok::TokenKind TagTokKind,
     TagType = DeclSpec::TST_interface;
   else if (TagTokKind == tok::kw_class)
     TagType = DeclSpec::TST_class;
+  else if (TagTokKind == tok::kw_type)
+    TagType = DeclSpec::TST_type;
   else {
     assert(TagTokKind == tok::kw_union && "Not a class specifier");
     TagType = DeclSpec::TST_union;
@@ -1450,7 +1452,9 @@ void Parser::ParseClassSpecifier(tok::TokenKind TagTokKind,
   }
 
   // If there is a body, parse it and inform the actions module.
+  // TODO: iec type definition semantices
   if (TUK == Sema::TUK_Definition) {
+    // TODO: do noe need this assert()
     assert(Tok.is(tok::l_brace) ||
            (getLangOpts().CPlusPlus && Tok.is(tok::colon)) ||
            isCXX0XFinalKeyword());
