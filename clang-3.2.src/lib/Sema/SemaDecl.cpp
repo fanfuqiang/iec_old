@@ -7795,6 +7795,7 @@ void Sema::CheckForFunctionRedefinition(FunctionDecl *FD) {
   }
 }
 
+// TODO: iec function & function block
 Decl *Sema::ActOnStartOfFunctionDef(Scope *FnBodyScope, Decl *D) {
   // Clear the last template instantiation error context.
   LastTemplateInstantiationErrorContext = ActiveTemplateInstantiation();
