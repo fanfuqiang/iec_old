@@ -2545,6 +2545,8 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
 
     // storage-class-specifier
     case tok::kw_typedef:
+    // iec data type declaration, iec has a total contrary declaration list
+    case tok::kw_type:
       isInvalid = DS.SetStorageClassSpec(Actions, DeclSpec::SCS_typedef, Loc,
                                          PrevSpec, DiagID);
       break;
