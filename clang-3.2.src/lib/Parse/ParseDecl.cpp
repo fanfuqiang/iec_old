@@ -1195,6 +1195,7 @@ Parser::DeclGroupPtrTy Parser::ParseDeclaration(/* args*/) {
 ///
 retType Parser::ParseTypeDeclaration(/* parameters*/) {
   // TODO: array, struct, string
+  // TODO: need more detials need more code reading
 
 }
 ///
