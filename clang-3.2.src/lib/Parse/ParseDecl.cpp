@@ -1170,6 +1170,34 @@ void Parser::ProhibitCXX11Attributes(ParsedAttributesWithRange &attrs) {
 /// [C++11/C11] static_assert-declaration
 ///         others... [FIXME]
 ///
+/// data_type_declaration ::=
+///     'TYPE' type_declaration ';'
+///     {type_declaration ';'}
+///     'END_TYPE'
+Parser::DeclGroupPtrTy Parser::ParseDeclaration(/* args*/) {
+  switch (Tok.getKind()) {
+    case tok::kw_type:
+      while (Tok.getKind() != tok::kw_end_type) {
+        // some inits
+        ;
+        ParseTypeDeclaration(/* args*/);
+      }
+      break;
+    case tok::kw_xxx:
+      ;
+      break;
+  }
+}
+///type_declaration ::= single_element_type_declaration
+///  | array_type_declaration
+///  | structure_type_declaration
+///  | string_type_declaration
+///
+retType Parser::ParseTypeDeclaration(/* parameters*/) {
+  // TODO: array, struct, string
+
+}
+///
 Parser::DeclGroupPtrTy Parser::ParseDeclaration(StmtVector &Stmts,
                                                 unsigned Context,
                                                 SourceLocation &DeclEnd,

@@ -534,6 +534,7 @@ ALIAS("__char32_t"   , char32_t   , KEYCXX)
 TESTING_KEYWORD(__unknown_anytype , KEYALL)
 
 // iec61131-3
+KEYWORD(dotdot                    , KEYIEC)
 KEYWORD(action                    , KEYIEC)
 KEYWORD(end_action                , KEYIEC)
 KEYWORD(array                     , KEYIEC)
