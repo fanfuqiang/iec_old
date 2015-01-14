@@ -2923,11 +2923,15 @@ LexNextToken:
     } else if (LangOpts.CPlusPlus && Char == '*') {
       Kind = tok::periodstar;
       CurPtr += SizeTmp;
-    } else if (Char == '.' &&
-               getCharAndSize(CurPtr+SizeTmp, SizeTmp2) == '.') {
-      Kind = tok::ellipsis;
-      CurPtr = ConsumeChar(ConsumeChar(CurPtr, SizeTmp, Result),
+    } else if (Char == '.') {
+      if (getCharAndSize(CurPtr+SizeTmp, SizeTmp2) == '.') {
+        Kind = tok::ellipsis;
+        CurPtr = ConsumeChar(ConsumeChar(CurPtr, SizeTmp, Result),
                            SizeTmp2, Result);
+      } else {  // iec subrange
+        Kind = tok::dotdot;
+        CurPtr = ConsumeChar(CurPtr, SizeTmp, Result);
+      }
     } else {
       Kind = tok::period;
     }
