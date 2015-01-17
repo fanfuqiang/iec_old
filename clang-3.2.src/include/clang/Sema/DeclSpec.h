@@ -263,6 +263,31 @@ public:
   static const TST TST_decimal32 = clang::TST_decimal32;
   static const TST TST_decimal64 = clang::TST_decimal64;
   static const TST TST_decimal128 = clang::TST_decimal128;
+  // iec basic type
+  //static const TST TST_bool = clang::TST_bool;
+  static const TST TST_sint = clang::TST_sint;
+  //static const TST TST_int = clang::TST_int;
+  static const TST TST_dint = clang::TST_dint;
+  static const TST TST_lint = clang::TST_lint;
+  static const TST TST_usint = clang::TST_usint;
+  static const TST TST_uint = clang::TST_uint;
+  static const TST TST_udint = clang::TST_udint;
+  static const TST TST_ulint = clang::TST_ulint;
+  static const TST TST_real = clang::TST_real;
+  static const TST TST_lreal = clang::TST_lreal;
+  static const TST TST_time = clang::TST_time;
+  static const TST TST_data = clang::TST_data;
+  static const TST TST_time_of_day = clang::TST_time_of_day;
+  static const TST TST_tod = clang::TST_tod;
+  static const TST TST_data_and_time = clang::TST_data_and_time;
+  static const TST TST_dt = clang::TST_dt;
+  static const TST TST_string = clang::TST_string;
+  static const TST TST_byte = clang::TST_byte;
+  static const TST TST_word = clang::TST_word;
+  static const TST TST_dword = clang::TST_dword;
+  static const TST TST_lword = clang::TST_lword;
+  static const TST TST_wstring = clang::TST_wstring;
+  // end iec basic type
   static const TST TST_enum = clang::TST_enum;
   static const TST TST_union = clang::TST_union;
   static const TST TST_struct = clang::TST_struct;

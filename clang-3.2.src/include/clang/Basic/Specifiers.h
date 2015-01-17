@@ -52,7 +52,30 @@ namespace clang {
     TST_enum,
     TST_union,
     TST_struct,
-    TST_type,         // iec define type
+    //TST_type,       // iec define type
+    TST_sint,         // iec short interger size is 8
+    //TST_int,        // iec interger size is 16
+    TST_dint,         // iec double interger size is 32
+    TST_lint,         // iec long interger size is 64
+    TST_usint,        // iec unsigned short interger size is 8
+    TST_uint,         // iec unsigned interger size is 16
+    TST_udint,        // iec unsigned double interger size is 32
+    TST_ulint,        // iec unsigned long interger size is 64
+    TST_real,         // iec real number size is 32
+    TST_lreal,        // iec long real size is 64
+    TST_time,         // iec duration
+    TST_data,         // iec data
+    TST_time_of_day,  // iec time of day
+    TST_tod,          // iec time of day
+    TST_data_and_time,// iec data and time of day
+    TST_dt,           // iec data and time of day
+    TST_string,       // iec variable-length single-byte character string
+    TST_byte,         // iec bit string of length 8
+    TST_word,         // iec bit string of length 16
+    TST_dword,        // iec bit string of length 32
+    TST_lword,        // iec bit string of length 64
+    TST_wstring,      // iec variable-length double-byte character string
+
     TST_class,        // C++ class type
     TST_interface,    // C++ (Microsoft-specific) __interface type
     TST_typename,     // Typedef, C++ class-name or enum name, etc.

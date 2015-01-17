@@ -1174,6 +1174,7 @@ void Parser::ProhibitCXX11Attributes(ParsedAttributesWithRange &attrs) {
 ///     'TYPE' type_declaration ';'
 ///     {type_declaration ';'}
 ///     'END_TYPE'
+if 0
 Parser::DeclGroupPtrTy Parser::ParseDeclaration(/* args*/) {
   switch (Tok.getKind()) {
     case tok::kw_type:
@@ -1198,6 +1199,7 @@ retType Parser::ParseTypeDeclaration(/* parameters*/) {
   // TODO: need more detials need more code reading
 
 }
+#endif
 ///
 Parser::DeclGroupPtrTy Parser::ParseDeclaration(StmtVector &Stmts,
                                                 unsigned Context,
@@ -1279,6 +1281,8 @@ Parser::ParseSimpleDeclaration(StmtVector &Stmts, unsigned Context,
 
   // C99 6.7.2.3p6: Handle "struct-or-union identifier;", "enum { X };"
   // declaration-specifiers init-declarator-list[opt] ';'
+#if 0
+  // this should illegal for iec 61131-3
   if (Tok.is(tok::semi)) {
     DeclEnd = Tok.getLocation();
     if (RequireSemi) ConsumeToken();
@@ -1287,6 +1291,7 @@ Parser::ParseSimpleDeclaration(StmtVector &Stmts, unsigned Context,
     DS.complete(TheDecl);
     return Actions.ConvertDeclToDeclGroup(TheDecl);
   }
+#endif
 
   return ParseDeclGroup(DS, Context, /*FunctionDefs=*/ false, &DeclEnd, FRI);
 }
@@ -2749,6 +2754,120 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
                                        DiagID);
       }
       break;
+    // iec basic types 
+    case tok::kw_sint:
+      // TODO: TST_sint or TST_char? sizeof(sint) is 8 
+      isInvalid = DS.SetTypeSpecType(DeclSpec::TST_sint, Loc, PrevSpec, DiagID) 
+                  && DS.SetTypeSpecSign(DeclSpec::TSS_signed, Loc, PrevSpec,
+                                        DiagID);
+      break;
+    //case tok::kw_int:
+      // TST_short? sizeof(iec int) is 16 
+      //isInvalid = DS.SetTypeSpecType(DeclSpec::TST_int, Loc, PrevSpec, DiagID) 
+      //            && DS.SetTypeSpecSign(DeclSpec::TSS_signed, Loc, PrevSpec,
+      //                                  DiagID);
+      //break;
+    case tok::kw_dint:
+      // TODO: TST_dint or TST_int? sizeof(sint) is 32 
+      isInvalid = DS.SetTypeSpecType(DeclSpec::TST_dint, Loc, PrevSpec, DiagID) 
+                  && DS.SetTypeSpecSign(DeclSpec::TSS_signed, Loc, PrevSpec,
+                                        DiagID);
+      break;
+    case tok::kw_lint:
+      // TODO: sizeof(sint) is 64 
+      isInvalid = DS.SetTypeSpecType(DeclSpec::TST_lint, Loc, PrevSpec, DiagID) 
+                  && DS.SetTypeSpecSign(DeclSpec::TSS_signed, Loc, PrevSpec,
+                                        DiagID);
+      break;
+    case tok::kw_usint:
+      // TODO: TST_usint or TST_char? sizeof(usint) is 8 
+      isInvalid = DS.SetTypeSpecType(DeclSpec::TST_usint, Loc, PrevSpec, DiagID) 
+                  && DS.SetTypeSpecSign(DeclSpec::TSS_unsigned, Loc, PrevSpec,
+                                        DiagID);
+      break;
+    case tok::kw_uint:
+      // TODO: TST_uint or TST_short? sizeof(uint) is 16 
+      isInvalid = DS.SetTypeSpecType(DeclSpec::TST_uint, Loc, PrevSpec, DiagID) 
+                  && DS.SetTypeSpecSign(DeclSpec::TSS_unsigned, Loc, PrevSpec,
+                                        DiagID);
+      break;
+    case tok::kw_udint:
+      // TODO: TST_udint or TST_unsigned_int? sizeof(udint) is 32
+      isInvalid = DS.SetTypeSpecType(DeclSpec::TST_udint, Loc, PrevSpec, DiagID) 
+                  && DS.SetTypeSpecSign(DeclSpec::TSS_unsigned, Loc, PrevSpec,
+                                        DiagID);
+      break;
+    case tok::kw_ulint:
+      // TODO: sizeof(ulint) is 64 
+      isInvalid = DS.SetTypeSpecType(DeclSpec::TST_ulint, Loc, PrevSpec, DiagID) 
+                  && DS.SetTypeSpecSign(DeclSpec::TSS_unsigned, Loc, PrevSpec,
+                                        DiagID);
+      break;
+    case tok::kw_real:
+      // TODO: TST_real or TST_float?
+      isInvalid = DS.SetTypeSpecType(DeclSpec::TST_real, Loc, PrevSpec,
+                                     DiagID);
+      break;
+    case tok::kw_lreal:
+      // TODO: TST_lreal or TST_double?
+      isInvalid = DS.SetTypeSpecType(DeclSpec::TST_lreal, Loc, PrevSpec,
+                                     DiagID);
+      break;
+    case tok::kw_time:
+      isInvalid = DS.SetTypeSpecType(DeclSpec::TST_time, Loc, PrevSpec,
+                                     DiagID);
+      break;
+    case tok::kw_data:
+      isInvalid = DS.SetTypeSpecType(DeclSpec::TST_data, Loc, PrevSpec,
+                                     DiagID);
+      break;
+    case tok::kw_time_of_day:
+      isInvalid = DS.SetTypeSpecType(DeclSpec::TST_time_of_day, Loc, PrevSpec,
+                                     DiagID);
+      break;
+    case tok::kw_tod:
+      isInvalid = DS.SetTypeSpecType(DeclSpec::TST_tod, Loc, PrevSpec,
+                                     DiagID);
+      break;
+    case tok::kw_data_and_time:
+      isInvalid = DS.SetTypeSpecType(DeclSpec::TST_data_and_time, Loc, PrevSpec,
+                                     DiagID);
+      break;
+    case tok::kw_dt:
+      isInvalid = DS.SetTypeSpecType(DeclSpec::TST_dt, Loc, PrevSpec,
+                                     DiagID);
+      break;
+    case tok::kw_string:
+      // TODO: big trouble, string is one of the basic types
+      isInvalid = DS.SetTypeSpecType(DeclSpec::TST_string, Loc, PrevSpec,
+                                     DiagID);
+      break;
+    case tok::kw_byte:
+      // TODO: char??
+      isInvalid = DS.SetTypeSpecType(DeclSpec::TST_byte, Loc, PrevSpec,
+                                     DiagID);
+      break;
+    case tok::kw_word:
+      // TODO: short?
+      isInvalid = DS.SetTypeSpecType(DeclSpec::TST_word, Loc, PrevSpec,
+                                     DiagID);
+      break;
+    case tok::kw_dword:
+      // TODO: int??
+      isInvalid = DS.SetTypeSpecType(DeclSpec::TST_dword, Loc, PrevSpec,
+                                     DiagID);
+      break;
+    case tok::kw_lword:
+      // TODO: int_64?
+      isInvalid = DS.SetTypeSpecType(DeclSpec::TST_float, Loc, PrevSpec,
+                                     DiagID);
+      break;
+    case tok::kw_wstring:
+      // TODO: big trouble, string is one of the basic types
+      isInvalid = DS.SetTypeSpecType(DeclSpec::TST_wstring, Loc, PrevSpec,
+                                     DiagID);
+      break;
+    // end iec basic types
     case tok::kw__Decimal32:
       isInvalid = DS.SetTypeSpecType(DeclSpec::TST_decimal32, Loc, PrevSpec,
                                      DiagID);
