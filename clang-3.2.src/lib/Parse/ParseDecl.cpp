@@ -2182,6 +2182,14 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
   bool EnteringContext = (DSContext == DSC_class || DSContext == DSC_top_level);
   bool AttrsLastTime = false;
   ParsedAttributesWithRange attrs(AttrFactory);
+  // data_type_declaration ::=
+  //     'type' type_declaration ';'
+  //     { type_declaration ';'}
+  //     'end_type'
+  if (Tok.getKind() != tok::kw_type) {
+    // TODO: Diag()
+    return;
+  }
   while (1) {
     bool isInvalid = false;
     const char *PrevSpec = 0;
@@ -2206,6 +2214,8 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
       // If this is not a declaration specifier token, we're done reading decl
       // specifiers.  First verify that DeclSpec's are consistent.
       DS.Finish(Diags, PP);
+      // iec data type declaration end marker
+      TryConsumeToken(tok::kw_end_type);
       return;
 
     case tok::l_square:
