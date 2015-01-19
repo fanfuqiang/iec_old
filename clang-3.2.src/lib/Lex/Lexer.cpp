@@ -3209,6 +3209,9 @@ LexNextToken:
     } else if (LangOpts.CPlusPlus && Char == ':') {
       Kind = tok::coloncolon;
       CurPtr = ConsumeChar(CurPtr, SizeTmp, Result);
+    } else if (Char == '=') {
+      Kind = tok::equal;
+      CurPtr = ConsumeChar(CurPtr, SizeTmp, Result);
     } else {
       Kind = tok::colon;
     }
@@ -3226,6 +3229,7 @@ LexNextToken:
       Kind = tok::equalequal;
       CurPtr = ConsumeChar(CurPtr, SizeTmp, Result);
     } else {
+      // TODO: Warnning, need ':=' in iec 61131
       Kind = tok::equal;
     }
     break;
