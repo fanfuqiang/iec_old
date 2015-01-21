@@ -1174,7 +1174,7 @@ void Parser::ProhibitCXX11Attributes(ParsedAttributesWithRange &attrs) {
 ///     'TYPE' type_declaration ';'
 ///     {type_declaration ';'}
 ///     'END_TYPE'
-if 0
+#if 0
 Parser::DeclGroupPtrTy Parser::ParseDeclaration(/* args*/) {
   switch (Tok.getKind()) {
     case tok::kw_type:
@@ -1194,7 +1194,7 @@ Parser::DeclGroupPtrTy Parser::ParseDeclaration(/* args*/) {
 ///  | structure_type_declaration
 ///  | string_type_declaration
 ///
-retType Parser::ParseTypeDeclaration(/* parameters*/) {
+//retType Parser::ParseTypeDeclaration(/* parameters*/) {
   // TODO: array, struct, string
   // TODO: need more detials need more code reading
 
@@ -3130,7 +3130,7 @@ void Parser::ParseStructUnionBody(SourceLocation RecordLoc,
   SmallVector<Decl *, 32> FieldDecls;
 
   // While we still have something to read, read the declarations in the struct.
-  while (Tok.isNot(tok::r_brace) && Tok.isNot(tok::eof)) {
+  while (/*Tok.isNot(tok::r_brace)*/Tok.isNot(tok::end_struct) && Tok.isNot(tok::eof)) {
     // Each iteration of this loop reads one struct-declaration.
 
     // Check for extraneous top-level semicolon.

@@ -1064,7 +1064,7 @@ void Parser::ParseClassSpecifier(tok::TokenKind TagTokKind,
     assert(TagTokKind == tok::kw_union && "Not a class specifier");
     TagType = DeclSpec::TST_union;
   }
-
+#if 0
   if (Tok.is(tok::code_completion)) {
     // Code completion for a struct, class, or union name.
     Actions.CodeCompleteTag(getCurScope(), TagType);
@@ -1148,7 +1148,7 @@ void Parser::ParseClassSpecifier(tok::TokenKind TagTokKind,
   }
 
   TemplateParameterLists *TemplateParams = TemplateInfo.TemplateParams;
-
+#endif 
   // Parse the (optional) class name or simple-template-id.
   IdentifierInfo *Name = 0;
   SourceLocation NameLoc;
@@ -1156,7 +1156,7 @@ void Parser::ParseClassSpecifier(tok::TokenKind TagTokKind,
   if (Tok.is(tok::identifier)) {
     Name = Tok.getIdentifierInfo();
     NameLoc = ConsumeToken();
-
+#if 0
     if (Tok.is(tok::less) && getLangOpts().CPlusPlus) {
       // The name was supposed to refer to a template, but didn't.
       // Eat the template argument list and try to continue parsing this as
@@ -1202,6 +1202,7 @@ void Parser::ParseClassSpecifier(tok::TokenKind TagTokKind,
           = SourceLocation();
       }
     }
+#endif
   } else if (Tok.is(tok::annot_template_id)) {
     TemplateId = takeTemplateIdAnnotation(Tok);
     NameLoc = ConsumeToken();
@@ -1241,6 +1242,9 @@ void Parser::ParseClassSpecifier(tok::TokenKind TagTokKind,
   //   &T::operator struct s;
   // For these, DSC is DSC_type_specifier.
   Sema::TagUseKind TUK;
+  // this musy be a data type definition in iec 
+  TUK = Sema::TUK_Definition;
+#if 0
   if (DSC == DSC_trailing)
     TUK = Sema::TUK_Reference;
   else if (Tok.is(tok::l_brace) ||
@@ -1274,7 +1278,7 @@ void Parser::ParseClassSpecifier(tok::TokenKind TagTokKind,
     }
   } else
     TUK = Sema::TUK_Reference;
-
+#endif
   // If this is an elaborated type specifier, and we delayed
   // diagnostics before, just merge them into the current pool.
   if (shouldDelayDiagsInTag) {
@@ -1454,13 +1458,13 @@ void Parser::ParseClassSpecifier(tok::TokenKind TagTokKind,
   // If there is a body, parse it and inform the actions module.
   // TODO: iec type definition semantices
   if (TUK == Sema::TUK_Definition) {
-    // TODO: do noe need this assert()
-    assert(Tok.is(tok::l_brace) ||
-           (getLangOpts().CPlusPlus && Tok.is(tok::colon)) ||
-           isCXX0XFinalKeyword());
+    //assert(Tok.is(tok::l_brace) ||
+           //(getLangOpts().CPlusPlus && Tok.is(tok::colon)) ||
+           //isCXX0XFinalKeyword());
     if (getLangOpts().CPlusPlus)
       ParseCXXMemberSpecification(StartLoc, TagType, TagOrTempResult.get());
     else
+      // all we need is this in iec data type declarations
       ParseStructUnionBody(StartLoc, TagType, TagOrTempResult.get());
   }
 
