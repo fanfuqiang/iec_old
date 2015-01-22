@@ -432,6 +432,7 @@ const char *DeclSpec::getSpecifierName(TQ T) {
 bool DeclSpec::SetStorageClassSpec(Sema &S, SCS SC, SourceLocation Loc,
                                    const char *&PrevSpec,
                                    unsigned &DiagID) {
+#if 0
   // OpenCL v1.1 s6.8g: "The extern, static, auto and register storage-class
   // specifiers are not supported.
   // It seems sensible to prohibit private_extern too
@@ -483,6 +484,7 @@ bool DeclSpec::SetStorageClassSpec(Sema &S, SCS SC, SourceLocation Loc,
           SC == SCS_typedef))
       return BadSpecifier(SC, (SCS)StorageClassSpec, PrevSpec, DiagID);
   }
+#endif
   StorageClassSpec = SC;
   StorageClassSpecLoc = Loc;
   assert((unsigned)SC == StorageClassSpec && "SCS constants overflow bitfield");
