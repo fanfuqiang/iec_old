@@ -1458,7 +1458,7 @@ Parser::DeclGroupPtrTy Parser::ParseDeclGroup(ParsingDeclSpec &DS,
     SkipMalformedDecl();
     return DeclGroupPtrTy();
   }
-
+#if 0
   // Save late-parsed attributes for now; they need to be parsed in the
   // appropriate function scope after the function Decl has been constructed.
   // These will be parsed in ParseFunctionDefinition or ParseLexedAttrList.
@@ -1517,11 +1517,11 @@ Parser::DeclGroupPtrTy Parser::ParseDeclGroup(ParsingDeclSpec &DS,
     D.complete(ThisDecl);
     return Actions.FinalizeDeclaratorGroup(getCurScope(), DS, &ThisDecl, 1);
   }
-
+#endif
   SmallVector<Decl *, 8> DeclsInGroup;
   Decl *FirstDecl = ParseDeclarationAfterDeclaratorAndAttributes(D);
-  if (LateParsedAttrs.size() > 0)
-    ParseLexedAttributeList(LateParsedAttrs, FirstDecl, true, false);
+ // if (LateParsedAttrs.size() > 0)
+   // ParseLexedAttributeList(LateParsedAttrs, FirstDecl, true, false);
   D.complete(FirstDecl);
   if (FirstDecl)
     DeclsInGroup.push_back(FirstDecl);
@@ -1554,7 +1554,7 @@ Parser::DeclGroupPtrTy Parser::ParseDeclGroup(ParsingDeclSpec &DS,
     //    short __attribute__((common)) var;    -> declspec
     //    short var __attribute__((common));    -> declarator
     //    short x, __attribute__((common)) var;    -> declarator
-    MaybeParseGNUAttributes(D);
+    //MaybeParseGNUAttributes(D);
 
     ParseDeclarator(D);
     if (!D.isInvalidType()) {
@@ -1641,6 +1641,7 @@ Decl *Parser::ParseDeclarationAfterDeclaratorAndAttributes(Declarator &D,
                                      const ParsedTemplateInfo &TemplateInfo) {
   // Inform the current actions module that we just parsed this declarator.
   Decl *ThisDecl = 0;
+#if 0
   switch (TemplateInfo.Kind) {
   case ParsedTemplateInfo::NonTemplate:
     ThisDecl = Actions.ActOnDeclarator(getCurScope(), D);
@@ -1668,13 +1669,16 @@ Decl *Parser::ParseDeclarationAfterDeclaratorAndAttributes(Declarator &D,
     break;
     }
   }
+#endif
 
   bool TypeContainsAuto =
     D.getDeclSpec().getTypeSpecType() == DeclSpec::TST_auto;
 
   // Parse declarator '=' initializer.
   // If a '==' or '+=' is found, suggest a fixit to '='.
-  if (isTokenEqualOrEqualTypo()) {
+  // for iec this is ':='
+  // data type initializer
+  if (/*isTokenEqualOrEqualTypo()*/Tok.getKind() == tok::equal) {
     ConsumeToken();
     if (Tok.is(tok::kw_delete)) {
       if (D.isFunctionDeclarator())
