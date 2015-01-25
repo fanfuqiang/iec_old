@@ -1205,13 +1205,15 @@ Parser::DeclGroupPtrTy Parser::ParseDeclaration(StmtVector &Stmts,
                                                 unsigned Context,
                                                 SourceLocation &DeclEnd,
                                           ParsedAttributesWithRange &attrs) {
+  // delete?
   ParenBraceBracketBalancer BalancerRAIIObj(*this);
   // Must temporarily exit the objective-c container scope for
   // parsing c none objective-c decls.
-  ObjCDeclContextSwitch ObjCDC(*this);
+  //ObjCDeclContextSwitch ObjCDC(*this);
 
-  Decl *SingleDecl = 0;
-  Decl *OwnedType = 0;
+  //Decl *SingleDecl = 0;
+  //Decl *OwnedType = 0;
+#if 0
   switch (Tok.getKind()) {
   case tok::kw_template:
   case tok::kw_export:
@@ -1244,11 +1246,13 @@ Parser::DeclGroupPtrTy Parser::ParseDeclaration(StmtVector &Stmts,
   default:
     return ParseSimpleDeclaration(Stmts, Context, DeclEnd, attrs, true);
   }
-
+#endif
+  
+  ParseSimpleDeclaration(Stmts, Context, DeclEnd, attrs, true);
   // This routine returns a DeclGroup, if the thing we parsed only contains a
   // single decl, convert it now. Alias declarations can also declare a type;
   // include that too if it is present.
-  return Actions.ConvertDeclToDeclGroup(SingleDecl, OwnedType);
+  //return Actions.ConvertDeclToDeclGroup(SingleDecl, OwnedType);
 }
 
 ///       simple-declaration: [C99 6.7: declaration] [C++ 7p1: dcl.dcl]
@@ -1267,6 +1271,15 @@ Parser::DeclGroupPtrTy Parser::ParseDeclaration(StmtVector &Stmts,
 /// If FRI is non-null, we might be parsing a for-range-declaration instead
 /// of a simple-declaration. If we find that we are, we also parse the
 /// for-range-initializer, and place it here.
+/// 
+/// TOP syntax of iec61131
+/// configuration_declaration ::=
+///   'CONFIGURATION' configuration_name
+///     [global_var_declarations]
+///     (single_resource_declaration | (resource_declaration {resource_declaration}))
+///     [access_declarations]
+///     [instance_specific_initializations]
+///   'END_RESOURCE'
 Parser::DeclGroupPtrTy
 Parser::ParseSimpleDeclaration(StmtVector &Stmts, unsigned Context,
                                SourceLocation &DeclEnd,
@@ -1275,6 +1288,14 @@ Parser::ParseSimpleDeclaration(StmtVector &Stmts, unsigned Context,
   // Parse the common declaration-specifiers piece.
   ParsingDeclSpec DS(*this);
   DS.takeAttributesFrom(attrs);
+  // the configuration
+  // TODO: need a new member function parse configuration
+  if (Tok.getKind() == tok::kw_configuration) {
+    // TODO:
+  } else {
+    // TODO: error code
+    Diag(Tok, /* add error code?*/);
+  }
 
   ParseDeclarationSpecifiers(DS, ParsedTemplateInfo(), AS_none,
                              getDeclSpecContextFromDeclaratorContext(Context));
