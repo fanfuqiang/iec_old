@@ -4261,7 +4261,7 @@ void Parser::ParseDeclaratorInternal(Declarator &D,
                                      DirectDeclParseFunction DirectDeclParser) {
   if (Diags.hasAllExtensionsSilenced())
     D.setExtension();
-
+#if 0
   // C++ member pointers start with a '::' or a nested-name.
   // Member pointers get special handling, since there's no place for the
   // scope spec in the generic path below.
@@ -4300,15 +4300,16 @@ void Parser::ParseDeclaratorInternal(Declarator &D,
       return;
     }
   }
-
+#endif
   tok::TokenKind Kind = Tok.getKind();
   // Not a pointer, C++ reference, or block.
+  // this must be a identifier in iec61131
   if (!isPtrOperatorToken(Kind, getLangOpts())) {
     if (DirectDeclParser)
       (this->*DirectDeclParser)(D);
     return;
   }
-
+#if 0
   // Otherwise, '*' -> pointer, '^' -> block, '&' -> lvalue reference,
   // '&&' -> rvalue reference
   SourceLocation Loc = ConsumeToken();  // Eat the *, ^, & or &&.
@@ -4391,6 +4392,7 @@ void Parser::ParseDeclaratorInternal(Declarator &D,
                   DS.getAttributes(),
                   SourceLocation());
   }
+#endif
 }
 
 static void diagnoseMisplacedEllipsis(Parser &P, Declarator &D,
@@ -4449,7 +4451,7 @@ static void diagnoseMisplacedEllipsis(Parser &P, Declarator &D,
 /// in isConstructorDeclarator.
 void Parser::ParseDirectDeclarator(Declarator &D) {
   DeclaratorScopeObj DeclScopeObj(*this, D.getCXXScopeSpec());
-
+#if 0
   if (getLangOpts().CPlusPlus && D.mayHaveIdentifier()) {
     // ParseDeclaratorInternal might already have parsed the scope.
     if (D.getCXXScopeSpec().isEmpty()) {
@@ -4464,33 +4466,6 @@ void Parser::ParseDirectDeclarator(Declarator &D) {
         // Change the declaration context for name lookup, until this function
         // is exited (and the declarator has been parsed).
         DeclScopeObj.EnterDeclaratorScope();
-    }
-
-    // C++0x [dcl.fct]p14:
-    //   There is a syntactic ambiguity when an ellipsis occurs at the end
-    //   of a parameter-declaration-clause without a preceding comma. In
-    //   this case, the ellipsis is parsed as part of the
-    //   abstract-declarator if the type of the parameter names a template
-    //   parameter pack that has not been expanded; otherwise, it is parsed
-    //   as part of the parameter-declaration-clause.
-    if (Tok.is(tok::ellipsis) && D.getCXXScopeSpec().isEmpty() &&
-        !((D.getContext() == Declarator::PrototypeContext ||
-           D.getContext() == Declarator::BlockLiteralContext) &&
-          NextToken().is(tok::r_paren) &&
-          !Actions.containsUnexpandedParameterPacks(D))) {
-      SourceLocation EllipsisLoc = ConsumeToken();
-      if (isPtrOperatorToken(Tok.getKind(), getLangOpts())) {
-        // The ellipsis was put in the wrong place. Recover, and explain to
-        // the user what they should have done.
-        ParseDeclarator(D);
-        diagnoseMisplacedEllipsis(*this, D, EllipsisLoc);
-        return;
-      } else
-        D.setEllipsisLoc(EllipsisLoc);
-
-      // The ellipsis can't be followed by a parenthesized declarator. We
-      // check for that in ParseParenDeclarator, after we have disambiguated
-      // the l_paren token.
     }
 
     if (Tok.is(tok::identifier) || Tok.is(tok::kw_operator) ||
@@ -4529,13 +4504,19 @@ void Parser::ParseDirectDeclarator(Declarator &D) {
       }
       goto PastIdentifier;
     }
-  } else if (Tok.is(tok::identifier) && D.mayHaveIdentifier()) {
+  } else
+#endif 
+  if (Tok.is(tok::identifier) && D.mayHaveIdentifier()) {
     assert(!getLangOpts().CPlusPlus &&
            "There's a C++-specific check for tok::identifier above");
     assert(Tok.getIdentifierInfo() && "Not an identifier?");
     D.SetIdentifier(Tok.getIdentifierInfo(), Tok.getLocation());
     ConsumeToken();
     goto PastIdentifier;
+  } else {
+    // this must be identifier in iec61131
+    // TODO: is this Diag() right?
+    Diag(Tok, diag::err_expected_unqualified_id);
   }
 
   if (Tok.is(tok::l_paren)) {
